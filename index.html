@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>To-Do</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <h1>My Tasks</h1>
+      <span class="stats" id="stats-label"></span>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="active">Active</button>
+      <button class="filter-btn" data-filter="done">Done</button>
+    </div>
+  </header>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea id="task-input" placeholder="새 할 일을 입력하세요..." rows="1"></textarea>
+      <div class="priority-row">
+        <button class="priority-chip selected-high" data-p="high">High</button>
+        <button class="priority-chip" data-p="medium">Medium</button>
+        <button class="priority-chip" data-p="low">Low</button>
+        <button class="priority-chip" data-p="none">None</button>
+      </div>
+    </div>
+    <button class="add-btn" id="add-btn" title="Add task">+</button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="loading-bar" class="loading-bar hidden"></div>
+
+  <!-- Task List -->
+  <div class="list-container" id="list"></div>
+
+  <!-- Clear Done Button -->
+  <button class="clear-done-btn" id="clear-done-btn" style="display:none">완료된 항목 삭제</button>
+
+  <!-- Edit Modal -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <h2>할 일 수정</h2>
+      <textarea id="edit-input" rows="3"></textarea>
+      <div class="modal-priority">
+        <button class="priority-chip selected-high" data-ep="high">High</button>
+        <button class="priority-chip" data-ep="medium">Medium</button>
+        <button class="priority-chip" data-ep="low">Low</button>
+        <button class="priority-chip" data-ep="none">None</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modal-cancel">취소</button>
+        <button class="btn btn-primary" id="modal-save">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase 설정 (URL, anon key) -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
