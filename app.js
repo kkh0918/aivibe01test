@@ -61,75 +61,101 @@ function setLoading(on) {
    ============================================================ */
 async function fetchTasks() {
   setLoading(true);
-  const { data, error } = await supabase
-    .from('tasks')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  setLoading(false);
-  if (error) { showToast('데이터 불러오기 실패: ' + error.message, true); return; }
-  tasks = data || [];
-  render();
+  try {
+    const { data, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    tasks = data || [];
+    render();
+  } catch (e) {
+    console.error('[fetchTasks]', e);
+    showToast('데이터 불러오기 실패: ' + e.message, true);
+    render(); // 빈 상태라도 표시
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function insertTask(text, priority) {
   setLoading(true);
-  const { data, error } = await supabase
-    .from('tasks')
-    .insert([{ text, priority, done: false }])
-    .select()
-    .single();
-
-  setLoading(false);
-  if (error) { showToast('추가 실패: ' + error.message, true); return; }
-  tasks.unshift(data);
-  render();
-  showToast('할 일이 추가되었습니다.');
+  try {
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert([{ text, priority, done: false }])
+      .select()
+      .single();
+    if (error) throw error;
+    tasks.unshift(data);
+    render();
+    showToast('할 일이 추가되었습니다.');
+  } catch (e) {
+    console.error('[insertTask]', e);
+    showToast('추가 실패: ' + e.message, true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function updateTask(id, changes) {
   setLoading(true);
-  const { data, error } = await supabase
-    .from('tasks')
-    .update(changes)
-    .eq('id', id)
-    .select()
-    .single();
-
-  setLoading(false);
-  if (error) { showToast('수정 실패: ' + error.message, true); return; }
-  const idx = tasks.findIndex(t => t.id === id);
-  if (idx !== -1) tasks[idx] = data;
-  render();
+  try {
+    const { data, error } = await supabase
+      .from('tasks')
+      .update(changes)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    const idx = tasks.findIndex(t => t.id === id);
+    if (idx !== -1) tasks[idx] = data;
+    render();
+  } catch (e) {
+    console.error('[updateTask]', e);
+    showToast('수정 실패: ' + e.message, true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function deleteTask(id) {
   setLoading(true);
-  const { error } = await supabase
-    .from('tasks')
-    .delete()
-    .eq('id', id);
-
-  setLoading(false);
-  if (error) { showToast('삭제 실패: ' + error.message, true); return; }
-  tasks = tasks.filter(t => t.id !== id);
-  render();
-  showToast('삭제되었습니다.');
+  try {
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+    tasks = tasks.filter(t => t.id !== id);
+    render();
+    showToast('삭제되었습니다.');
+  } catch (e) {
+    console.error('[deleteTask]', e);
+    showToast('삭제 실패: ' + e.message, true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function deleteAllDone() {
   setLoading(true);
   const doneIds = tasks.filter(t => t.done).map(t => t.id);
-  const { error } = await supabase
-    .from('tasks')
-    .delete()
-    .in('id', doneIds);
-
-  setLoading(false);
-  if (error) { showToast('삭제 실패: ' + error.message, true); return; }
-  tasks = tasks.filter(t => !t.done);
-  render();
-  showToast('완료 항목이 삭제되었습니다.');
+  try {
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .in('id', doneIds);
+    if (error) throw error;
+    tasks = tasks.filter(t => !t.done);
+    render();
+    showToast('완료 항목이 삭제되었습니다.');
+  } catch (e) {
+    console.error('[deleteAllDone]', e);
+    showToast('삭제 실패: ' + e.message, true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 /* ============================================================
